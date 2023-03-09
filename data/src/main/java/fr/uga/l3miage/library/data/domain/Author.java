@@ -4,11 +4,31 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 
+@Entity
 public class Author {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String fullName;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "book_author",
+        joinColumns = @JoinColumn(name = "author_id"),
+        inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    @Column(nullable = true)
     private Set<Book> books;
 
     public Long getId() {

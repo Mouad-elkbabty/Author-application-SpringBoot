@@ -1,11 +1,14 @@
 package fr.uga.l3miage.library.data.repo;
 
 import fr.uga.l3miage.library.data.domain.Author;
+import fr.uga.l3miage.library.data.domain.Book;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+
 
 @Repository
 public class AuthorRepository implements CRUDRepository<Long, Author> {
@@ -41,8 +44,9 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      */
     @Override
     public List<Author> all() {
-        // TODO
-        return null;
+/*         String jpql =  "select authors from Book order by authors" ;
+        List<Book> authors = entityManager.createQuery(jpql, Book.class).getResultList(); */
+        return null ;
     }
 
     /**
