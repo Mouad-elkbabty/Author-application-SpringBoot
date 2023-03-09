@@ -1,5 +1,6 @@
 package fr.uga.l3miage.library.data.repo;
 
+import fr.uga.l3miage.library.data.domain.Author;
 import fr.uga.l3miage.library.data.domain.Book;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,6 @@ public class BookRepository implements CRUDRepository<Long, Book> {
      * @return une liste de livres
      */
     public List<Book> all() {
-        // TODO créer les named query
         return entityManager.createNamedQuery("all-books", Book.class).getResultList();
     }
 
@@ -49,9 +49,8 @@ public class BookRepository implements CRUDRepository<Long, Book> {
      * @return une liste de livres
      */
     public List<Book> findByContainingTitle(String titlePart) {
-        // TODO créer les named query
         return entityManager.createNamedQuery("find-books-by-title", Book.class)
-                // TODO completer l'appel pour utiliser le paramètre de cette méthode
+                .setParameter("title", "%" + titlePart.toLowerCase() + "%")
                 .getResultList();
     }
 
@@ -62,9 +61,11 @@ public class BookRepository implements CRUDRepository<Long, Book> {
      * @return une liste de livres
      */
     public List<Book> findByAuthorIdAndContainingTitle(Long authorId, String titlePart) {
-        // TODO créer les named query
+        String author = "%" + authorId.toString().toLowerCase() + "%";
+        String title = "%" + titlePart.toLowerCase() + "%";
         return entityManager.createNamedQuery("find-books-by-author-and-title", Book.class)
-                // TODO completer l'appel pour utiliser les paramètres de cette méthode
+                .setParameter("author", author)
+                .setParameter("title", title)
                 .getResultList();
     }
 
@@ -76,7 +77,7 @@ public class BookRepository implements CRUDRepository<Long, Book> {
     public List<Book> findBooksByAuthorContainingName(String namePart) {
         // TODO créer les named query
         return entityManager.createNamedQuery("find-books-by-authors-name", Book.class)
-                // TODO completer l'appel pour utiliser le paramètre de cette méthode
+                .setParameter("authorName", namePart)
                 .getResultList();
     }
 
@@ -87,8 +88,12 @@ public class BookRepository implements CRUDRepository<Long, Book> {
      */
     public List<Book> findBooksHavingAuthorCountGreaterThan(int count) {
         // TODO créer les named query
+        List<Author> authors = entityManager.createQuery(
+            "SELECT a FROM Author a JOIN a.books b GROUP BY a HAVING COUNT(b) > :count", Author.class)
+            .setParameter("count", count)
+            .getResultList();
         return entityManager.createNamedQuery("find-books-by-several-authors", Book.class)
-                // TODO completer l'appel pour utiliser le paramètre de cette méthode
+                .setParameter("authors", authors)
                 .getResultList();
     }
 

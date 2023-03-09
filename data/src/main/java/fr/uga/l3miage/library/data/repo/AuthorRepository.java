@@ -44,8 +44,8 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      */
     @Override
     public List<Author> all() {
-        String jpql = "SELECT a FROM Author a ORDER BY a.fullName";
-        return entityManager.createQuery(jpql, Author.class).getResultList();
+        String query = "SELECT a FROM Author a ORDER BY a.fullName";
+        return entityManager.createQuery(query, Author.class).getResultList();
     }
 
     /**
@@ -55,8 +55,8 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      * @return une liste d'auteurs trié par nom
      */
     public List<Author> searchByName(String namePart) {
-        String jpql = "SELECT a FROM Author a WHERE LOWER(a.fullName) LIKE LOWER(:namePart) ORDER BY a.fullName";
-        return entityManager.createQuery(jpql, Author.class)
+        String query = "SELECT a FROM Author a WHERE LOWER(a.fullName) LIKE LOWER(:namePart) ORDER BY a.fullName";
+        return entityManager.createQuery(query, Author.class)
             .setParameter("namePart", "%" + namePart + "%")
             .getResultList();
     }
@@ -67,12 +67,8 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      * @return true si l'auteur partage
      */
     public boolean checkAuthorByIdHavingCoAuthoredBooks(long authorId) {
-        String jpql = "SELECT COUNT(b.id) > 0 " +
-                      "FROM Book b " +
-                      "JOIN b.authors a " +
-                      "WHERE a.id = :authorId " +
-                      "AND SIZE(b.authors) > 1";
-        return entityManager.createQuery(jpql, Boolean.class)
+        String query = "SELECT COUNT(b.id) > 0 FROM Book b JOIN b.authors a WHERE a.id = :authorId AND SIZE(b.authors) > 1";
+        return entityManager.createQuery(query, Boolean.class)
                             .setParameter("authorId", authorId)
                             .getSingleResult();
     }

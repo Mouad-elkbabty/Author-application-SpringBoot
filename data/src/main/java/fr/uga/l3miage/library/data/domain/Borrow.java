@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.Entity;
+
+@Entity
 public class Borrow {
     private Long id;
     private List<Book> books;

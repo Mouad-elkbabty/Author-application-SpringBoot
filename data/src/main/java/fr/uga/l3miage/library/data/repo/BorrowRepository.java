@@ -45,8 +45,9 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return la liste des emprunts en cours
      */
     public List<Borrow> findInProgressByUser(String userId) {
-        // TODO
-        return null;
+        String query1 = "FROM Borrow b JOIN b.copy c  JOIN c.book bk JOIN b.user u WHERE u.id = :userId AND b.returnDate IS NULL";
+        var query = entityManager.createQuery(query1, Borrow.class).setParameter("userId", userId);
+        return query.getResultList();
     }
 
     /**
@@ -56,8 +57,10 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return le nombre de livre
      */
     public int countBorrowedBooksByUser(String userId) {
-        // TODO
-        return 0;
+        String subQuery = "SELECT COUNT(b.books) FROM Borrow b WHERE b.borrower.id = :userId";
+        var query = entityManager.createQuery(subQuery, Long.class).setParameter("userId", userId);
+        Long result = query.getSingleResult();
+        return result != null ? result.intValue() : 0;
     }
 
     /**
@@ -67,8 +70,8 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return le nombre de livre
      */
     public int countCurrentBorrowedBooksByUser(String userId) {
-        // TODO
-        return 0;
+        List<Borrow> inProgressBorrows = findInProgressByUser(userId);
+        return inProgressBorrows.size();
     }
 
     /**
@@ -77,19 +80,20 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return la liste des emprunt en retard
      */
     public List<Borrow> foundAllLateBorrow() {
-        // TODO
-        return null;
+        var query = entityManager.createQuery("SELECT b FROM Borrow b WHERE b.returnDate IS NULL AND b.dueDate < CURRENT_TIMESTAMP ORDER BY b.dueDate", Borrow.class);
+        return query.getResultList();
     }
 
     /**
      * Calcul les emprunts qui seront en retard entre maintenant et x jours.
      *
      * @param days le nombre de jour avant que l'emprunt soit en retard
+     * 
      * @return les emprunt qui sont bientôt en retard
      */
     public List<Borrow> findAllBorrowThatWillLateWithin(int days) {
-        // TODO
-        return null;
+        String query = "SELECT b FROM Borrow b WHERE b.returnDate IS NULL AND b.dueDate <= (CURRENT_DATE + :days)";
+        return entityManager.createQuery(query, Borrow.class).setParameter("days", days).getResultList();
     }
 
 }

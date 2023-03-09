@@ -27,11 +27,11 @@ import java.util.Set;
     ),
     @NamedQuery(
         name="find-books-by-author-and-title",
-        query="select b  from book b where LOWER(b.author) like : author and LOWER(b.title) like :title ORDER BY title,author ASC"
+        query="select b from book b where LOWER(b.author) like :author and LOWER(b.title) like :title ORDER BY title,author ASC"
     ),
     @NamedQuery(
         name = "find-books-by-authors-name",
-        query = "SELECT b FROM Book b JOIN b.authors a WHERE a.fullName = :authorName"
+        query = "SELECT b FROM Book b JOIN b.authors a WHERE lower(a.fullName) like lower(concat('%', :authorName, '%'))"
     ),
     @NamedQuery(
         name = "find-books-by-several-authors",
