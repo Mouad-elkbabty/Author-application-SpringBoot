@@ -18,7 +18,7 @@ import java.util.Set;
 
 @NamedQueries({
     @NamedQuery(
-        name="all-book",
+        name="all-books",
         query="select b from Book b ORDER BY b.title ASC"
     ),
     @NamedQuery(
@@ -30,8 +30,12 @@ import java.util.Set;
         query="select b  from book b where LOWER(b.author) like : author and LOWER(b.title) like :title ORDER BY title,author ASC"
     ),
     @NamedQuery(
-        name="find-books-by-authors-name",
-        query="select a from author a where Lower(a.fullName) like :fullName "
+        name = "find-books-by-authors-name",
+        query = "SELECT b FROM Book b JOIN b.authors a WHERE a.fullName = :authorName"
+    ),
+    @NamedQuery(
+        name = "find-books-by-several-authors",
+        query = "SELECT b FROM Book b WHERE b.authors IN :authors"
     )
 })
 @Entity

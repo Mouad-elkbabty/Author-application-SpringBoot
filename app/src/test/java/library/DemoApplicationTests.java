@@ -19,7 +19,7 @@ class DemoApplicationTests {
     @SuppressWarnings("java:S2699")
     @Test
     void contextLoads() {
-
+        
     }
 
     @Autowired
