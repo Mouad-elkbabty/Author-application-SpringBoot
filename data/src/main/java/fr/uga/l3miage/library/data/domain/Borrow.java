@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 @Entity
 public class Borrow {
+    @Id
+    @GeneratedValue
     private Long id;
     private List<Book> books;
     private Date start;
@@ -19,7 +23,6 @@ public class Borrow {
     public Long getId() {
         return id;
     }
-
 
     public List<Book> getBooks() {
         return books;
@@ -71,10 +74,14 @@ public class Borrow {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Borrow borrow = (Borrow) o;
-        return finished == borrow.finished && Objects.equals(id, borrow.id) && Objects.equals(books, borrow.books) && Objects.equals(start, borrow.start) && Objects.equals(requestedReturn, borrow.requestedReturn) && Objects.equals(borrower, borrow.borrower) && Objects.equals(librarian, borrow.librarian);
+        return finished == borrow.finished && Objects.equals(id, borrow.id) && Objects.equals(books, borrow.books)
+                && Objects.equals(start, borrow.start) && Objects.equals(requestedReturn, borrow.requestedReturn)
+                && Objects.equals(borrower, borrow.borrower) && Objects.equals(librarian, borrow.librarian);
     }
 
     @Override

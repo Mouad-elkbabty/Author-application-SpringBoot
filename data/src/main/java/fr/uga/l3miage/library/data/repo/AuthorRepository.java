@@ -1,14 +1,11 @@
 package fr.uga.l3miage.library.data.repo;
 
 import fr.uga.l3miage.library.data.domain.Author;
-import fr.uga.l3miage.library.data.domain.Book;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-
 
 @Repository
 public class AuthorRepository implements CRUDRepository<Long, Author> {
@@ -31,7 +28,6 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
         return entityManager.find(Author.class, id);
     }
 
-
     @Override
     public void delete(Author author) {
         entityManager.remove(author);
@@ -49,7 +45,8 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
     }
 
     /**
-     * Recherche un auteur par nom (ou partie du nom) de façon insensible  à la casse.
+     * Recherche un auteur par nom (ou partie du nom) de façon insensible à la
+     * casse.
      *
      * @param namePart tout ou partie du nomde l'auteur
      * @return une liste d'auteurs trié par nom
@@ -57,8 +54,8 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
     public List<Author> searchByName(String namePart) {
         String query = "SELECT a FROM Author a WHERE LOWER(a.fullName) LIKE LOWER(:namePart) ORDER BY a.fullName";
         return entityManager.createQuery(query, Author.class)
-            .setParameter("namePart", "%" + namePart + "%")
-            .getResultList();
+                .setParameter("namePart", "%" + namePart + "%")
+                .getResultList();
     }
 
     /**
@@ -69,8 +66,8 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
     public boolean checkAuthorByIdHavingCoAuthoredBooks(long authorId) {
         String query = "SELECT COUNT(b.id) > 0 FROM Book b JOIN b.authors a WHERE a.id = :authorId AND SIZE(b.authors) > 1";
         return entityManager.createQuery(query, Boolean.class)
-                            .setParameter("authorId", authorId)
-                            .getSingleResult();
+                .setParameter("authorId", authorId)
+                .getSingleResult();
     }
 
 }

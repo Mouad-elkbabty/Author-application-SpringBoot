@@ -1,6 +1,5 @@
 package fr.uga.l3miage.library.data.domain;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,57 +10,41 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @NamedQueries({
-    @NamedQuery(
-        name="all-books",
-        query="select b from Book b ORDER BY b.title ASC"
-    ),
-    @NamedQuery(
-        name="find-books-by-title",
-        query="select b from book b where LOWER(b.title) like :title  Oder by title ASC"
-    ),
-    @NamedQuery(
-        name="find-books-by-author-and-title",
-        query="select b from book b where LOWER(b.author) like :author and LOWER(b.title) like :title ORDER BY title,author ASC"
-    ),
-    @NamedQuery(
-        name = "find-books-by-authors-name",
-        query = "SELECT b FROM Book b JOIN b.authors a WHERE lower(a.fullName) like lower(concat('%', :authorName, '%'))"
-    ),
-    @NamedQuery(
-        name = "find-books-by-several-authors",
-        query = "SELECT b FROM Book b WHERE b.authors IN :authors"
-    )
+        @NamedQuery(name = "all-books", query = "select b from Book b ORDER BY b.title ASC"),
+        @NamedQuery(name = "find-books-by-title", query = "select b from book b where LOWER(b.title) like :title  Oder by title ASC"),
+        @NamedQuery(name = "find-books-by-author-and-title", query = "select b from book b where LOWER(b.author) like :author and LOWER(b.title) like :title ORDER BY title,author ASC"),
+        @NamedQuery(name = "find-books-by-authors-name", query = "SELECT b FROM Book b JOIN b.authors a WHERE lower(a.fullName) like lower(concat('%', :authorName, '%'))"),
+        @NamedQuery(name = "find-books-by-several-authors", query = "SELECT b FROM Book b WHERE b.authors IN :authors")
 })
 @Entity
+@Table(name = "Book")
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(unique = true)
+    @Column(name = "isbn", nullable = false)
     private long isbn;
-
-
+    @Column(name = "publisher", nullable = false)
     private String publisher;
-
+    @Column(name = "annee", nullable = false)
     private short year;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "language", nullable = false)
     private Language language;
 
-
-    @ManyToMany(mappedBy="books")
+    @ManyToMany(mappedBy = "books")
     private Set<Author> authors;
 
     public Long getId() {
@@ -134,10 +117,14 @@ public class Book {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Book book = (Book) o;
-        return isbn == book.isbn && year == book.year && Objects.equals(title, book.title) && Objects.equals(publisher, book.publisher) && language == book.language && Objects.equals(authors, book.authors);
+        return isbn == book.isbn && year == book.year && Objects.equals(title, book.title)
+                && Objects.equals(publisher, book.publisher) && language == book.language
+                && Objects.equals(authors, book.authors);
     }
 
     @Override
