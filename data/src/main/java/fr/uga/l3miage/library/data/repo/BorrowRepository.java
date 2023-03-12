@@ -65,8 +65,8 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return le nombre de livre
      */
     public int countBorrowedBooksByUser(String userId) {
-        String subQuery = "SELECT COUNT(b.books) FROM Borrow b WHERE b.borrower.id = :userId";
-        var query = entityManager.createQuery(subQuery, Long.class).setParameter("userId", userId);
+        String query1 = "SELECT COUNT(*) FROM Book b LEFT JOIN Borrow b LEFT JOIN User u where u.id = :userId ";
+        var query = entityManager.createQuery(query1, Long.class).setParameter("userId", userId);
         Long result = query.getSingleResult();
         return result != null ? result.intValue() : 0;
     }
@@ -107,6 +107,16 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
                 .createQuery(query, Borrow.class)
                 .setParameter("date", Date.from(ZonedDateTime.now().plus(days, ChronoUnit.DAYS).toInstant()))
                 .getResultList();
+    }
+
+    public List<Borrow> findAllLateBorrow() {
+        String query = "SELECT b FROM Borrow b WHERE b.requestedReturn < :date";
+
+        return entityManager
+                .createQuery(query, Borrow.class)
+                .setParameter("date", Date.from(ZonedDateTime.now().toInstant()))
+                .getResultList();
+
     }
 
 }

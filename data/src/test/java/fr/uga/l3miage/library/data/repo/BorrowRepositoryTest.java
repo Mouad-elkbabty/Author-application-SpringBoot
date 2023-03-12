@@ -81,8 +81,11 @@ class BorrowRepositoryTest extends Base {
 
     @Test
     void countCurrentBorrowedBooksByUser() {
-
-        // TODO
+        Borrow borrow1 = Fixtures.newBorrow(u1, l1, b1, b2);
+        Borrow borrow2 = Fixtures.newBorrow(u1, l1, b3);
+        entityManager.persist(borrow1);
+        entityManager.persist(borrow2);
+        assertThat(repository.countCurrentBorrowedBooksByUser(u1.getId())).isEqualTo(2);
 
     }
 
@@ -96,8 +99,20 @@ class BorrowRepositoryTest extends Base {
     @Test
     void foundAllLateBorrow() {
 
-        // TODO
+        Borrow late1DayAgo = Fixtures.newBorrow(u1, l1, b1);
+        late1DayAgo.setRequestedReturn(Date.from(ZonedDateTime.now().minus(1, ChronoUnit.DAYS).toInstant()));
+        Borrow late2DaysAgo = Fixtures.newBorrow(u1, l1, b2);
+        late2DaysAgo.setRequestedReturn(Date.from(ZonedDateTime.now().minus(2, ChronoUnit.DAYS).toInstant()));
+        Borrow late3DaysAgo = Fixtures.newBorrow(u2, l1, b3);
+        late3DaysAgo.setRequestedReturn(Date.from(ZonedDateTime.now().minus(3, ChronoUnit.DAYS).toInstant()));
 
+        entityManager.persist(late1DayAgo);
+        entityManager.persist(late2DaysAgo);
+        entityManager.persist(late3DaysAgo);
+        entityManager.flush();
+
+        List<Borrow> borrows = repository.findAllLateBorrow();
+        assertThat(borrows).containsExactlyInAnyOrder(late1DayAgo, late2DaysAgo, late3DaysAgo);
     }
 
     @Test
