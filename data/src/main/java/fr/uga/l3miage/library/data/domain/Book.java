@@ -31,6 +31,9 @@ public class Book {
 
     private String publisher;
 
+    @ManyToOne
+    private Borrow borrow;
+
     @Column(name = "annee")
     private short year;
 

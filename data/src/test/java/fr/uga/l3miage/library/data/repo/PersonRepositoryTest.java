@@ -114,6 +114,8 @@ class PersonRepositoryTest extends Base {
 
         entityManager.flush();
 
+        System.out.println(u1.getBirth());
+
         List<User> allOlderThan = userRepository.findAllOlderThan(30);
         assertThat(allOlderThan).containsExactlyInAnyOrder(u2, u3);
 

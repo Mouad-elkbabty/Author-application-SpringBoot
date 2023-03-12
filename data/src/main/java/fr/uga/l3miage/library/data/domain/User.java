@@ -3,10 +3,31 @@ package fr.uga.l3miage.library.data.domain;
 import java.util.Date;
 import java.util.Objects;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
+
 // Attention le mot 'user' est reservé
+@NamedQuery(name = "findAll", query = "SELECT u FROM User u")
+@Entity
+@DiscriminatorValue("1")
 public class User extends Person {
+
     private Date registered;
+
     private float lateRatio;
+
+    @OneToOne
+    private Borrow borrow;
+
+    public Borrow getBorrow() {
+        return this.borrow;
+    }
+
+    public void set(Borrow borrow) {
+        this.borrow = borrow;
+    }
 
     public Date getRegistered() {
         return registered;

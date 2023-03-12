@@ -23,7 +23,7 @@ public class BooksController {
 
     @Autowired
     public BooksController(BookService bookService, BooksMapper booksMapper) {
-       this.bookService = bookService;
+        this.bookService = bookService;
         this.booksMapper = booksMapper;
     }
 
@@ -88,7 +88,8 @@ public class BooksController {
 
     /**
      * Here is the missing endpoint!
-     * You do one the following "PUT" endpoint: yes it is update, you don't create anything.
+     * You do one the following "PUT" endpoint: yes it is update, you don't create
+     * anything.
      * <li><code>PUT /books/{id}/authors</code> and use the author as payload</li>
      * <li><code>PUT /authors/{id}/books</code> and use the book as payload</li>
      *
@@ -96,7 +97,7 @@ public class BooksController {
      * @param author the author to add
      */
     @PutMapping("/books/{id}/authors")
-    public BookDTO addAuthor(@PathVariable("id") @NotNull Long bookId, @RequestBody @Valid AuthorDTO author)  {
+    public BookDTO addAuthor(@PathVariable("id") @NotNull Long bookId, @RequestBody @Valid AuthorDTO author) {
         try {
             if (author.id() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

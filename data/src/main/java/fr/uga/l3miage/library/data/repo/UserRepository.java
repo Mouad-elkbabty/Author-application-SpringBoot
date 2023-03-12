@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -36,20 +39,21 @@ public class UserRepository implements CRUDRepository<String, User> {
 
     @Override
     public List<User> all() {
-        return entityManager.createQuery("from User", User.class).getResultList();
+        return entityManager.createQuery("findAll", User.class).getResultList();
     }
 
     /**
      * Trouve tous les utilisateurs ayant plus de l'age passé
+     * 
      * @param age l'age minimum de l'utilisateur
      * @return
      */
     public List<User> findAllOlderThan(int age) {
-        LocalDate anneeMin = LocalDate.now().minusYears(age);
+        Date anneeMin = Date.from(ZonedDateTime.now().minus(age, ChronoUnit.YEARS).toInstant());
         String query = "SELECT u FROM User u WHERE u.birth <= :anneeMin";
         return entityManager.createQuery(query, User.class)
-            .setParameter("anneeMin", anneeMin)
-            .getResultList();
-    } 
+                .setParameter("anneeMin", anneeMin)
+                .getResultList();
+    }
 
 }

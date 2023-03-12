@@ -7,6 +7,8 @@ import java.util.Objects;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,12 +18,26 @@ public class Borrow {
     @Id
     @GeneratedValue
     private Long id;
+    @OneToMany(mappedBy = "borrow")
     private List<Book> books;
     private Date start;
+
     private Date requestedReturn;
+
+    @OneToOne
     private User borrower;
+
+    @OneToOne
     private Librarian librarian;
     private boolean finished;
+
+    public User getBorrower() {
+        return this.borrower;
+    }
+
+    public void setBorrower(User borrower) {
+        this.borrower = borrower;
+    }
 
     public Long getId() {
         return id;
@@ -49,14 +65,6 @@ public class Borrow {
 
     public void setRequestedReturn(Date end) {
         this.requestedReturn = end;
-    }
-
-    public User getBorrower() {
-        return borrower;
-    }
-
-    public void setBorrower(User borrower) {
-        this.borrower = borrower;
     }
 
     public Librarian getLibrarian() {
