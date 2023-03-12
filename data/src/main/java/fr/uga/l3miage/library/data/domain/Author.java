@@ -1,27 +1,19 @@
 package fr.uga.l3miage.library.data.domain;
 
+import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-
 @Entity
 @Table(name = "Author")
 public class Author {
-
     @Id
     @GeneratedValue
     private Long id;
-    @Column(name = "nom_auteur")
+
+    @Column(name = "fullName", length = 50)
     private String fullName;
 
     @ManyToMany

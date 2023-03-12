@@ -1,47 +1,40 @@
 package fr.uga.l3miage.library.data.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@NamedQueries({
-        @NamedQuery(name = "all-books", query = "select b from Book b ORDER BY b.title ASC"),
-        @NamedQuery(name = "find-books-by-title", query = "select b from book b where LOWER(b.title) like :title  Oder by title ASC"),
-        @NamedQuery(name = "find-books-by-author-and-title", query = "select b from book b where LOWER(b.author) like :author and LOWER(b.title) like :title ORDER BY title,author ASC"),
-        @NamedQuery(name = "find-books-by-authors-name", query = "SELECT b FROM Book b JOIN b.authors a WHERE lower(a.fullName) like lower(concat('%', :authorName, '%'))"),
-        @NamedQuery(name = "find-books-by-several-authors", query = "SELECT b FROM Book b WHERE b.authors IN :authors")
-})
 @Entity
 @Table(name = "Book")
+
+@NamedQueries({
+        @NamedQuery(name = "all-books", query = "SELECT b FROM Book b ORDER BY b.title ASC"),
+
+        @NamedQuery(name = "find-books-by-title", query = "SELECT b FROM Book b WHERE LOWER(b.title) LIKE CONCAT('%', :titlePart, '%') ORDER BY b.title ASC"),
+        @NamedQuery(name = "find-books-by-author-and-title", query = "SELECT b FROM Book b JOIN b.authors a WHERE a.id = :authorId AND LOWER(b.title) LIKE CONCAT('%', :titlePart, '%') ORDER BY b.title ASC"),
+        @NamedQuery(name = "find-books-by-authors-name", query = "SELECT b FROM Book b JOIN b.authors a WHERE LOWER(a.fullName) LIKE CONCAT('%', LOWER(:namePart), '%') ORDER BY b.title ASC"),
+        @NamedQuery(name = "find-books-by-several-authors", query = "SELECT b FROM Book b WHERE SIZE(b.authors) > :count")
+})
+
 public class Book {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Basic(optional = false)
     private String title;
 
-    @Column(name = "isbn", nullable = false)
     private long isbn;
-    @Column(name = "publisher", nullable = false)
+
     private String publisher;
-    @Column(name = "annee", nullable = false)
+
+    @Column(name = "annee")
     private short year;
 
-    @Column(name = "language", nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private Language language;
 
     @ManyToMany(mappedBy = "books")

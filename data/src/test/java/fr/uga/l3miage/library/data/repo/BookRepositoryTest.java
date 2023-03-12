@@ -80,7 +80,6 @@ class BookRepositoryTest extends Base {
         Book b3 = Fixtures.newBook();
         b3.setTitle("I'm an old smock");
 
-
         Author a1 = Fixtures.newAuthor();
         Author a2 = Fixtures.newAuthor();
         a1.addBook(b1);

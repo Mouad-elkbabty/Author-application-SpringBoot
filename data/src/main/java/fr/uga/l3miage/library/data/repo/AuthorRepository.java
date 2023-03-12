@@ -2,6 +2,8 @@ package fr.uga.l3miage.library.data.repo;
 
 import fr.uga.l3miage.library.data.domain.Author;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -40,7 +42,10 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      */
     @Override
     public List<Author> all() {
-        String query = "SELECT a FROM Author a ORDER BY a.fullName";
+        // requete pour obtenir le nom des authors triés par nom
+        String query = "select a FROM Author ORDER BY a.fullname ASC";
+
+        // retourne la liste des autheurs
         return entityManager.createQuery(query, Author.class).getResultList();
     }
 
@@ -52,10 +57,11 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      * @return une liste d'auteurs trié par nom
      */
     public List<Author> searchByName(String namePart) {
-        String query = "SELECT a FROM Author a WHERE LOWER(a.fullName) LIKE LOWER(:namePart) ORDER BY a.fullName";
-        return entityManager.createQuery(query, Author.class)
-                .setParameter("namePart", "%" + namePart + "%")
-                .getResultList();
+        TypedQuery<Author> query = entityManager.createQuery(
+                "SELECT a FROM Author a WHERE a.fullName LIKE CONCAT('%', :namePart, '%')",
+                Author.class);
+        query.setParameter("namePart", namePart);
+        return query.getResultList();
     }
 
     /**
@@ -64,10 +70,14 @@ public class AuthorRepository implements CRUDRepository<Long, Author> {
      * @return true si l'auteur partage
      */
     public boolean checkAuthorByIdHavingCoAuthoredBooks(long authorId) {
-        String query = "SELECT COUNT(b.id) > 0 FROM Book b JOIN b.authors a WHERE a.id = :authorId AND SIZE(b.authors) > 1";
-        return entityManager.createQuery(query, Boolean.class)
+
+        String query = "SELECT COUNT(*) FROM Book b JOIN b.authors a WHERE a.id = :authorId AND EXISTS (SELECT 1 FROM Book b2 JOIN b2.authors a2 WHERE a2.id <> a.id AND b2.id = b.id)";
+
+        Long count = entityManager.createQuery(query, Long.class)
                 .setParameter("authorId", authorId)
                 .getSingleResult();
+
+        return count > 0;
     }
 
 }

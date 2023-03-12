@@ -26,9 +26,12 @@ public class User extends Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof User user))
+            return false;
+        if (!super.equals(o))
+            return false;
         return Float.compare(user.lateRatio, lateRatio) == 0 && Objects.equals(registered, user.registered);
     }
 
