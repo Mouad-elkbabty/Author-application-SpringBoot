@@ -263,3 +263,5 @@ A ce stade tous les tests doivent passer.
 Vous joindrez au rendu un ou deux paragraphe en réponse aux "questions" suivantes:
 * Justifiez le choix de la stratégie de de mapping d'héritage.
 * Critiquez le modèle de donnée, il contient quelques erreurs de conception.
+#   l 3 - t p - j p a  
+ 
