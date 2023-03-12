@@ -5,6 +5,9 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -45,8 +48,13 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return la liste des emprunts en cours
      */
     public List<Borrow> findInProgressByUser(String userId) {
-        String query1 = "FROM Borrow b JOIN b.copy c  JOIN c.book bk JOIN b.user u WHERE u.id = :userId AND b.returnDate IS NULL";
-        var query = entityManager.createQuery(query1, Borrow.class).setParameter("userId", userId);
+        // String query1 = "FROM Borrow b JOIN b.copy c JOIN c.book bk JOIN b.user u
+        // WHERE u.id = :userId AND b.returnDate IS NULL";
+        String query1 = "FROM Borrow b LEFT JOIN User u where u.id = :userId AND b.finished != :finished";
+        var query = entityManager
+                .createQuery(query1, Borrow.class)
+                .setParameter("userId", userId)
+                .setParameter("finished", true);
         return query.getResultList();
     }
 
@@ -80,7 +88,9 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return la liste des emprunt en retard
      */
     public List<Borrow> foundAllLateBorrow() {
-        var query = entityManager.createQuery("SELECT b FROM Borrow b WHERE b.returnDate IS NULL AND b.dueDate < CURRENT_TIMESTAMP ORDER BY b.dueDate", Borrow.class);
+        var query = entityManager.createQuery(
+                "SELECT b FROM Borrow b WHERE b.returnDate IS NULL AND b.dueDate < CURRENT_TIMESTAMP ORDER BY b.dueDate",
+                Borrow.class);
         return query.getResultList();
     }
 
@@ -92,8 +102,11 @@ public class BorrowRepository implements CRUDRepository<String, Borrow> {
      * @return les emprunt qui sont bientôt en retard
      */
     public List<Borrow> findAllBorrowThatWillLateWithin(int days) {
-        String query = "SELECT b FROM Borrow b WHERE b.returnDate IS NULL AND b.dueDate <= (CURRENT_DATE + :days)";
-        return entityManager.createQuery(query, Borrow.class).setParameter("days", days).getResultList();
+        String query = "SELECT b FROM Borrow b WHERE b.requestedReturn <= :date";
+        return entityManager
+                .createQuery(query, Borrow.class)
+                .setParameter("date", Date.from(ZonedDateTime.now().plus(days, ChronoUnit.DAYS).toInstant()))
+                .getResultList();
     }
 
 }
